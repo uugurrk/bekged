@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SiteLayout } from "../components/SiteLayout";
 
 function NotFoundComponent() {
   return (
@@ -77,21 +78,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-    ],
-    links: [
+      { title: "BEKGED — Youth, inclusion and climate action from Istanbul" },
       {
-        rel: "stylesheet",
-        href: appCss,
+        name: "description",
+        content:
+          "BEKGED is an Istanbul-based NGO empowering youth through Erasmus+ exchanges, training courses and ESC volunteering, with a focus on inclusion and climate action.",
       },
+      { name: "author", content: "BEKGED" },
+      { property: "og:title", content: "BEKGED — Youth, inclusion and climate action" },
+      {
+        property: "og:description",
+        content:
+          "Erasmus+ sending and hosting NGO based in Istanbul. Projects, calls, gallery and ways to join us.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -118,8 +121,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <SiteLayout>
+        <Outlet />
+      </SiteLayout>
     </QueryClientProvider>
   );
 }
