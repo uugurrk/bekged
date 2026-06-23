@@ -2,16 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { projects, site, type Project } from "@/data/site";
+import { supabase } from "@/integrations/supabase/client";
+import { site } from "@/data/site";
+import { useProjects, type Project } from "@/data/content";
 
 export const Route = createFileRoute("/projects")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Projects & open calls — BEKGED" },
       {
         name: "description",
         content:
-          "Browse open Erasmus+ youth exchanges and training courses with BEKGED (Boğaziçi Education Culture and Development Association) and apply through our online form.",
+          "Browse open Erasmus+ youth exchanges and training courses with BEKGED (Bosphorus Education Culture and Development Association) and apply through our online form.",
       },
       { property: "og:title", content: "Projects & open calls — BEKGED" },
     ],
@@ -22,12 +25,13 @@ export const Route = createFileRoute("/projects")({
 const filters = ["All", "Open", "Upcoming", "Closed"] as const;
 
 function Projects() {
+  const { data: projects = [], isLoading } = useProjects();
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
   const [selected, setSelected] = useState<Project | null>(null);
 
   const list = useMemo(
     () => (filter === "All" ? projects : projects.filter((p) => p.status === filter)),
-    [filter],
+    [filter, projects],
   );
 
   return (
@@ -59,38 +63,44 @@ function Projects() {
       </section>
 
       <section className="container-pad pb-20">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {list.map((p) => (
-            <article key={p.slug} className="card-pop flex flex-col">
-              <div className="flex items-center justify-between">
-                <span className="chip">{p.type}</span>
-                <StatusPill status={p.status} />
-              </div>
-              <h3 className="mt-4 font-display text-xl font-bold">{p.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {p.country} · {p.dates}
-              </p>
-              <p className="mt-3 flex-1 text-sm">{p.summary}</p>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {p.topics.map((t) => (
-                  <span key={t} className="rounded-full bg-muted px-2 py-0.5 text-xs">
-                    {t}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-5 flex items-center justify-between text-sm">
-                <span className="font-semibold text-primary">Deadline {p.deadline}</span>
-                <button
-                  onClick={() => setSelected(p)}
-                  disabled={p.status === "Closed"}
-                  className="btn-pop !px-4 !py-2 text-xs disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {p.status === "Closed" ? "Closed" : "Başvur / Apply"}
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
+        {isLoading ? (
+          <p className="text-muted-foreground">Loading projects…</p>
+        ) : list.length === 0 ? (
+          <p className="text-muted-foreground">No projects in this category yet.</p>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {list.map((p) => (
+              <article key={p.slug} className="card-pop flex flex-col">
+                <div className="flex items-center justify-between">
+                  <span className="chip">{p.type}</span>
+                  <StatusPill status={p.status} />
+                </div>
+                <h3 className="mt-4 font-display text-xl font-bold">{p.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {p.country} · {p.dates}
+                </p>
+                <p className="mt-3 flex-1 text-sm">{p.summary}</p>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {p.topics.map((t) => (
+                    <span key={t} className="rounded-full bg-muted px-2 py-0.5 text-xs">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-5 flex items-center justify-between text-sm">
+                  <span className="font-semibold text-primary">Deadline {p.deadline}</span>
+                  <button
+                    onClick={() => setSelected(p)}
+                    disabled={p.status === "Closed"}
+                    className="btn-pop !px-4 !py-2 text-xs disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {p.status === "Closed" ? "Closed" : "Başvur / Apply"}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       {selected && <ApplyModal project={selected} onClose={() => setSelected(null)} />}
@@ -99,12 +109,12 @@ function Projects() {
 }
 
 function StatusPill({ status }: { status: Project["status"] }) {
-  const map = {
+  const map: Record<string, { bg: string; text: string }> = {
     Open: { bg: "var(--secondary)", text: "white" },
     Upcoming: { bg: "var(--accent)", text: "var(--ink)" },
     Closed: { bg: "var(--muted)", text: "var(--muted-foreground)" },
-  } as const;
-  const s = map[status];
+  };
+  const s = map[status] ?? map.Open;
   return (
     <span
       className="rounded-full border-2 border-foreground px-2 py-0.5 text-xs font-bold uppercase tracking-wider"
@@ -115,16 +125,8 @@ function StatusPill({ status }: { status: Project["status"] }) {
   );
 }
 
-const passportOptions = [
-  "Bordo Pasaport",
-  "Yeşil Pasaport",
-  "Schengen Vizem Var",
-  "Pasaportum Yok",
-  "Diğer",
-];
-
+const passportOptions = ["Bordo Pasaport", "Yeşil Pasaport", "Schengen Vizem Var", "Pasaportum Yok", "Diğer"];
 const englishLevels = ["A1", "A2", "B1", "B2", "C1", "C2", "Anadil / Native"];
-
 const barriers = [
   "Sosyal engeller (cinsiyet, etnik köken, din vb. nedeniyle ayrımcılık)",
   "Ekonomik engeller (düşük yaşam standardı, düşük gelir vb.)",
@@ -139,7 +141,7 @@ const barriers = [
 function ApplyModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [submitting, setSubmitting] = useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const name = String(data.get("name") || "").trim();
@@ -149,7 +151,9 @@ function ApplyModal({ project, onClose }: { project: Project; onClose: () => voi
     const motivation = String(data.get("motivation") || "").trim();
     const consent1 = data.get("consent_truth");
     const consent2 = data.get("consent_kvkk");
-    const consentAge = data.get("consent_adult") || data.get("consent_parent");
+    const consentAdult = data.get("consent_adult");
+    const consentParent = data.get("consent_parent");
+    const barriersSelected = data.getAll("barriers").map(String);
 
     if (!name || name.length > 100) return toast.error("Lütfen geçerli bir ad-soyad giriniz.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
@@ -158,15 +162,38 @@ function ApplyModal({ project, onClose }: { project: Project; onClose: () => voi
     if (!city) return toast.error("Lütfen ikamet ettiğiniz şehir ve ilçeyi giriniz.");
     if (motivation.length < 50 || motivation.length > 2000)
       return toast.error("Motivasyon 50–2000 karakter arasında olmalıdır.");
-    if (!consent1 || !consent2 || !consentAge)
+    if (!consent1 || !consent2 || (!consentAdult && !consentParent))
       return toast.error("Lütfen gerekli onay kutularını işaretleyiniz.");
 
     setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      toast.success("Başvurunuz alındı! En kısa sürede sizinle iletişime geçeceğiz.");
-      onClose();
-    }, 800);
+    const { error } = await supabase.from("applications").insert({
+      project_slug: project.slug,
+      project_title: project.title,
+      full_name: name,
+      email,
+      phone,
+      birthdate: (String(data.get("birthdate") || "") || null) as any,
+      city,
+      passport_type: String(data.get("passport_type") || "") || null,
+      passport_expiry: (String(data.get("passport_expiry") || "") || null) as any,
+      english_level: String(data.get("english_level") || "") || null,
+      previous_projects: Number(data.get("previous_projects") || 0),
+      barriers: barriersSelected,
+      motivation,
+      ngo_experience: String(data.get("ngo_experience") || "") || null,
+      follow_ig: !!data.get("follow_ig"),
+      follow_wa: !!data.get("follow_wa"),
+      consent_age: consentAdult ? "18+" : "under_18_with_parent",
+      status: "pending",
+    });
+    setSubmitting(false);
+
+    if (error) {
+      toast.error("Başvurunuz gönderilemedi. Lütfen tekrar deneyin.");
+      return;
+    }
+    toast.success("Başvurunuz alındı! En kısa sürede sizinle iletişime geçeceğiz.");
+    onClose();
   }
 
   return (
@@ -254,12 +281,7 @@ function ApplyModal({ project, onClose }: { project: Project; onClose: () => voi
             <div className="space-y-2 rounded-xl border-2 border-foreground/20 p-3">
               {barriers.map((b) => (
                 <label key={b} className="flex items-start gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    name="barriers"
-                    value={b}
-                    className="mt-1 h-4 w-4 accent-[var(--primary)]"
-                  />
+                  <input type="checkbox" name="barriers" value={b} className="mt-1 h-4 w-4 accent-[var(--primary)]" />
                   <span>{b}</span>
                 </label>
               ))}
@@ -267,14 +289,7 @@ function ApplyModal({ project, onClose }: { project: Project; onClose: () => voi
           </fieldset>
 
           <Field label="Projeye başvurma motivasyonunuz (lütfen yapay zeka kullanmayınız) — 50–2000 karakter">
-            <textarea
-              name="motivation"
-              required
-              minLength={50}
-              maxLength={2000}
-              rows={6}
-              className="input-base resize-none"
-            />
+            <textarea name="motivation" required minLength={50} maxLength={2000} rows={6} className="input-base resize-none" />
           </Field>
 
           <fieldset>
@@ -284,23 +299,13 @@ function ApplyModal({ project, onClose }: { project: Project; onClose: () => voi
             <div className="grid gap-2 sm:grid-cols-2">
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="follow_ig" className="h-4 w-4 accent-[var(--primary)]" />
-                <a
-                  href="https://www.instagram.com/bekgedernegi/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2"
-                >
+                <a href="https://www.instagram.com/bekgedernegi/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
                   Instagram: @bekgedernegi
                 </a>
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="follow_wa" className="h-4 w-4 accent-[var(--primary)]" />
-                <a
-                  href="https://whatsapp.com/channel/0029VaGOdZJ35fLqypFjCY3V"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2"
-                >
+                <a href="https://whatsapp.com/channel/0029VaGOdZJ35fLqypFjCY3V" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
                   WhatsApp Kanalımız
                 </a>
               </label>
@@ -313,58 +318,26 @@ function ApplyModal({ project, onClose }: { project: Project; onClose: () => voi
 
           <div className="space-y-3 rounded-xl border-2 border-foreground/30 bg-muted/30 p-4 text-sm">
             <label className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                name="consent_truth"
-                required
-                className="mt-1 h-4 w-4 accent-[var(--primary)]"
-              />
+              <input type="checkbox" name="consent_truth" required className="mt-1 h-4 w-4 accent-[var(--primary)]" />
               <span>
-                Bu başvuru formunda verdiğim bilgilerin doğru olduğunu beyan ederim. Etkinlik
-                tarihlerinde müsaitim ve seçilmem halinde katılacağım. Koordinatörümün
-                talimatlarını takip edeceğim ve iletişim gruplarına (WhatsApp vb.) eklenmeyi
-                kabul ediyorum.
+                Bu başvuru formunda verdiğim bilgilerin doğru olduğunu beyan ederim. Etkinlik tarihlerinde müsaitim ve seçilmem halinde katılacağım. Koordinatörümün talimatlarını takip edeceğim ve iletişim gruplarına (WhatsApp vb.) eklenmeyi kabul ediyorum.
               </span>
             </label>
             <label className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                name="consent_kvkk"
-                required
-                className="mt-1 h-4 w-4 accent-[var(--primary)]"
-              />
+              <input type="checkbox" name="consent_kvkk" required className="mt-1 h-4 w-4 accent-[var(--primary)]" />
               <span>
-                Kişisel verilerimin 6698 sayılı KVKK kapsamında işlenmesine ve etkinlik
-                fotoğraf/videolarımın görünürlük, yaygınlaştırma ve raporlama amacıyla
-                organizatör ve ortak kuruluşlar tarafından kullanılmasına/paylaşılmasına
-                (Erasmus+ projelerinde AB kurumlarıyla da) izin veriyorum.
+                Kişisel verilerimin 6698 sayılı KVKK kapsamında işlenmesine ve etkinlik fotoğraf/videolarımın görünürlük, yaygınlaştırma ve raporlama amacıyla organizatör ve ortak kuruluşlar tarafından kullanılmasına/paylaşılmasına (Erasmus+ projelerinde AB kurumlarıyla da) izin veriyorum.
               </span>
             </label>
-
             <div className="border-t-2 border-foreground/20 pt-3">
               <p className="mb-2 font-semibold">Yaş onayı (birini işaretleyiniz):</p>
               <label className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  name="consent_adult"
-                  className="mt-1 h-4 w-4 accent-[var(--primary)]"
-                />
-                <span>
-                  18 yaşının üzerindeyim. Verilerimin etkinliğin diğer katılımcıları,
-                  kolaylaştırıcıları ve koordinatörleriyle paylaşılmasına onay veriyorum.
-                </span>
+                <input type="checkbox" name="consent_adult" className="mt-1 h-4 w-4 accent-[var(--primary)]" />
+                <span>18 yaşının üzerindeyim. Verilerimin etkinliğin diğer katılımcıları, kolaylaştırıcıları ve koordinatörleriyle paylaşılmasına onay veriyorum.</span>
               </label>
               <label className="mt-2 flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  name="consent_parent"
-                  className="mt-1 h-4 w-4 accent-[var(--primary)]"
-                />
-                <span>
-                  18 yaşın altındayım — bu formu velim onayıyla doldurdum ve verilerimin
-                  etkinlik katılımcıları, kolaylaştırıcıları ve koordinatörleriyle
-                  paylaşılmasına velim adıma onay veriyor.
-                </span>
+                <input type="checkbox" name="consent_parent" className="mt-1 h-4 w-4 accent-[var(--primary)]" />
+                <span>18 yaşın altındayım — bu formu velim onayıyla doldurdum ve verilerimin etkinlik katılımcıları, kolaylaştırıcıları ve koordinatörleriyle paylaşılmasına velim adıma onay veriyor.</span>
               </label>
             </div>
           </div>
@@ -372,7 +345,6 @@ function ApplyModal({ project, onClose }: { project: Project; onClose: () => voi
           <button type="submit" disabled={submitting} className="btn-pop w-full disabled:opacity-60">
             {submitting ? "Gönderiliyor…" : "Başvuruyu Gönder"}
           </button>
-
           <p className="text-center text-xs text-muted-foreground">
             Başvurunuz {site.email} adresine ulaşacaktır.
           </p>
