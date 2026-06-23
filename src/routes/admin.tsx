@@ -10,14 +10,15 @@ export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
-const tabs = [
+type Tab = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+const tabs: Tab[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/projects", label: "Projects", icon: FolderKanban },
   { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
   { to: "/admin/gallery", label: "Gallery", icon: ImageIcon },
   { to: "/admin/about", label: "About", icon: Info },
   { to: "/admin/applications", label: "Applications", icon: Inbox },
-] as const;
+];
 
 function AdminLayout() {
   const { user, isAdmin, loading } = useAuth();
