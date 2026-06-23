@@ -44,7 +44,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         // Try to auto-claim admin (no-op if an admin already exists)
-        await supabase.rpc("claim_admin").catch(() => {});
+        try { await supabase.rpc("claim_admin"); } catch {}
         toast.success("Signed in.");
         navigate({ to: "/admin" });
       }
