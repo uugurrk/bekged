@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "BEKGED (Boğaziçi Education Culture and Development Association) is an Istanbul-based NGO empowering youth through Erasmus+ exchanges and training courses, with a focus on inclusion and climate action.",
+          "BEKGED (Bosphorus Education Culture and Development Association) is an Istanbul-based NGO empowering youth through Erasmus+ exchanges and training courses, with a focus on inclusion and climate action.",
       },
       { name: "author", content: "BEKGED" },
       { property: "og:title", content: "BEKGED — Youth, inclusion and climate action" },
