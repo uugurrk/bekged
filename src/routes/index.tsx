@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "BEKGED sends and hosts young people across Europe through Erasmus+ youth exchanges, training courses and ESC volunteering. Based in Istanbul.",
+          "Boğaziçi Education Culture and Development Association (BEKGED) sends and hosts young people across Europe through Erasmus+ youth exchanges and training courses. Based in Istanbul.",
       },
       { property: "og:title", content: "BEKGED — Youth, inclusion & climate" },
       { property: "og:image", content: heroImg },
@@ -37,9 +37,9 @@ function Home() {
               <span className="text-secondary">planet</span>.
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-              BEKGED is a youth NGO based in {site.city}. We send and host young Europeans through
-              Erasmus+ exchanges, training courses and ESC volunteering — with inclusion and climate
-              action at our core.
+              {site.fullName} (BEKGED) is a youth NGO based in {site.city}. We send and host young
+              Europeans through Erasmus+ youth exchanges and training courses — with inclusion and
+              climate action at our core.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/projects" className="btn-pop">
