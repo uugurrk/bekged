@@ -14,16 +14,247 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      about_sections: {
+        Row: {
+          content: string
+          key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          key: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          key?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          created_at: string
+          date: string
+          excerpt: string
+          id: string
+          slug: string
+          tag: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          excerpt: string
+          id?: string
+          slug: string
+          tag?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          excerpt?: string
+          id?: string
+          slug?: string
+          tag?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      applications: {
+        Row: {
+          admin_notes: string | null
+          barriers: string[] | null
+          birthdate: string | null
+          city: string | null
+          consent_age: string | null
+          created_at: string
+          email: string
+          english_level: string | null
+          follow_ig: boolean | null
+          follow_wa: boolean | null
+          full_name: string
+          id: string
+          motivation: string
+          ngo_experience: string | null
+          passport_expiry: string | null
+          passport_type: string | null
+          phone: string | null
+          previous_projects: number | null
+          project_slug: string
+          project_title: string
+          status: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          barriers?: string[] | null
+          birthdate?: string | null
+          city?: string | null
+          consent_age?: string | null
+          created_at?: string
+          email: string
+          english_level?: string | null
+          follow_ig?: boolean | null
+          follow_wa?: boolean | null
+          full_name: string
+          id?: string
+          motivation: string
+          ngo_experience?: string | null
+          passport_expiry?: string | null
+          passport_type?: string | null
+          phone?: string | null
+          previous_projects?: number | null
+          project_slug: string
+          project_title: string
+          status?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          barriers?: string[] | null
+          birthdate?: string | null
+          city?: string | null
+          consent_age?: string | null
+          created_at?: string
+          email?: string
+          english_level?: string | null
+          follow_ig?: boolean | null
+          follow_wa?: boolean | null
+          full_name?: string
+          id?: string
+          motivation?: string
+          ngo_experience?: string | null
+          passport_expiry?: string | null
+          passport_type?: string | null
+          phone?: string | null
+          previous_projects?: number | null
+          project_slug?: string
+          project_title?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      gallery_items: {
+        Row: {
+          alt: string
+          created_at: string
+          id: string
+          sort_order: number
+          span: string
+          src: string
+        }
+        Insert: {
+          alt?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          span?: string
+          src: string
+        }
+        Update: {
+          alt?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          span?: string
+          src?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          country: string
+          created_at: string
+          dates: string
+          deadline: string
+          id: string
+          participants: number
+          slug: string
+          sort_order: number
+          status: string
+          summary: string
+          title: string
+          topics: string[]
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          dates: string
+          deadline?: string
+          id?: string
+          participants?: number
+          slug: string
+          sort_order?: number
+          status?: string
+          summary: string
+          title: string
+          topics?: string[]
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          dates?: string
+          deadline?: string
+          id?: string
+          participants?: number
+          slug?: string
+          sort_order?: number
+          status?: string
+          summary?: string
+          title?: string
+          topics?: string[]
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_admin: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +381,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
