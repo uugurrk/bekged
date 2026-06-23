@@ -30,10 +30,10 @@ function About() {
       <section className="container-pad py-16 md:py-24">
         <span className="chip">Our story</span>
         <h1 className="mt-4 max-w-3xl font-display text-5xl font-bold leading-tight md:text-7xl">
-          A youth NGO from Istanbul, working across Europe.
+          {site.fullName}.
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-          Welcome to {site.name}. Based in Istanbul, we are dedicated to empowering youth through
+          Welcome to BEKGED. Based in Istanbul, we are dedicated to empowering youth through
           non-formal education and fostering civil society. Our mission is to provide valuable
           resources and promote social inclusion for disadvantaged young people, while enhancing
           diversity and encouraging intercultural learning. Join us in creating a brighter future
@@ -50,6 +50,25 @@ function About() {
               <p className="mt-1 text-sm text-muted-foreground">{text}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="container-pad py-16">
+        <span className="chip">What we do</span>
+        <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">Our activities</h2>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          <p className="text-lg text-muted-foreground">
+            At BEKGED we implement a variety of activities that promote youth participation,
+            international mobility and intercultural learning. We organise Erasmus+ information
+            workshops at youth centers and educational institutions, where young people learn
+            about international opportunities and how to access them.
+          </p>
+          <p className="text-lg text-muted-foreground">
+            To ensure equal access, we also run online information and Q&amp;A sessions for young
+            people facing geographical barriers. In addition, we organise networking events, youth
+            gatherings and picnics that bring together young people from different regions of
+            Türkiye.
+          </p>
         </div>
       </section>
 
