@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "BEKGED (Bosphorus Education Culture and Development Association) is an Istanbul-based NGO empowering youth through Erasmus+ exchanges and training courses, with a focus on inclusion and climate action.",
       },
       { name: "author", content: "BEKGED" },
-      { property: "og:title", content: "BEKGED — Youth, inclusion and climate action" },
+      { property: "og:title", content: "BEKGED — Youth, inclusion and climate action from Istanbul" },
       {
         property: "og:description",
         content:
@@ -93,6 +93,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "BEKGED — Youth, inclusion and climate action from Istanbul" },
+      { name: "description", content: "Erasmus Connect Hub is an NGO website for sharing Erasmus project information and engaging users." },
+      { property: "og:description", content: "Erasmus Connect Hub is an NGO website for sharing Erasmus project information and engaging users." },
+      { name: "twitter:description", content: "Erasmus Connect Hub is an NGO website for sharing Erasmus project information and engaging users." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/18f11359-a64b-4c62-834b-de67f30730de/id-preview-2bf84987--9cf96eb9-3ca9-4bf9-8946-ba9835baac6e.lovable.app-1782321394448.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/18f11359-a64b-4c62-834b-de67f30730de/id-preview-2bf84987--9cf96eb9-3ca9-4bf9-8946-ba9835baac6e.lovable.app-1782321394448.png" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
