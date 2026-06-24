@@ -51,11 +51,11 @@
   /* Brand */
   --cream: oklch(0.98 0.014 80);              /* #FFF8F0 */
   --ink: oklch(0.28 0.03 260);                /* #1F2937 */
-  --coral: oklch(0.72 0.18 25);               /* #FF6B5B */
-  --coral-deep: oklch(0.62 0.2 25);
-  --teal: oklch(0.72 0.12 180);               /* #1FB8A3 */
-  --teal-deep: oklch(0.55 0.12 185);
-  --butter: oklch(0.94 0.09 95);
+  --coral: oklch(0.72 0.14 195);              /* turquoise (was coral) */
+  --coral-deep: oklch(0.58 0.14 200);
+  --teal: oklch(0.62 0.13 200);               /* turquoise deep */
+  --teal-deep: oklch(0.48 0.13 205);
+  --butter: oklch(0.93 0.08 190);             /* pale aqua */
 
   --background: var(--cream);
   --foreground: var(--ink);
@@ -77,7 +77,7 @@
   --input: oklch(0.9 0.015 80);
   --ring: var(--coral);
 
-  --gradient-sunset: linear-gradient(135deg, var(--coral) 0%, oklch(0.78 0.17 50) 60%, var(--butter) 100%);
+  --gradient-sunset: linear-gradient(135deg, var(--coral) 0%, oklch(0.78 0.12 190) 60%, var(--butter) 100%);
   --gradient-lagoon: linear-gradient(135deg, var(--teal) 0%, var(--coral) 100%);
   --shadow-pop: 8px 8px 0 0 var(--ink);
   --shadow-pop-coral: 6px 6px 0 0 var(--coral);
