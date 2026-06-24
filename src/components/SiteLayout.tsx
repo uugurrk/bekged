@@ -22,20 +22,20 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b-2 border-foreground bg-background/90 backdrop-blur">
-      <div className="container-pad flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold tracking-tight">
-          <img src={site.logo} alt="BEKGED logo" className="h-9 w-9 object-contain" />
-          {site.name}
+      <div className="container-pad flex h-16 items-center justify-between gap-3">
+        <Link to="/" className="flex min-w-0 items-center gap-2 font-display text-xl font-bold tracking-tight">
+          <img src={site.logo} alt="BEKGED logo" className="h-9 w-9 shrink-0 object-contain" />
+          <span className="truncate">{site.name}</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {nav.map((item) => {
             const active = pathname === item.to;
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
                   active ? "bg-foreground text-background" : "hover:bg-accent"
                 }`}
               >
@@ -46,7 +46,7 @@ function Header() {
           {isAdmin && (
             <Link
               to="/admin"
-              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
                 pathname.startsWith("/admin")
                   ? "bg-primary text-primary-foreground"
                   : "bg-accent hover:bg-primary hover:text-primary-foreground"
@@ -57,7 +57,7 @@ function Header() {
           )}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden shrink-0 items-center gap-2 lg:flex">
           {user ? (
             <button
               onClick={() => supabase.auth.signOut()}
@@ -67,7 +67,7 @@ function Header() {
               <LogOut className="h-3.5 w-3.5" /> Sign out
             </button>
           ) : null}
-          <Link to="/projects" className="btn-pop !px-5 !py-2 text-sm">
+          <Link to="/projects" className="btn-pop whitespace-nowrap !px-5 !py-2 text-sm">
             Apply now
           </Link>
         </div>
@@ -75,14 +75,14 @@ function Header() {
         <button
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
-          className="rounded-full border-2 border-foreground p-2 md:hidden"
+          className="shrink-0 rounded-full border-2 border-foreground p-2 lg:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="border-t-2 border-foreground bg-background md:hidden">
+        <div className="border-t-2 border-foreground bg-background lg:hidden">
           <div className="container-pad flex flex-col gap-1 py-3">
             {nav.map((item) => (
               <Link
