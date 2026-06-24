@@ -82,7 +82,7 @@ function Header() {
       </div>
 
       {open && (
-        <div className="border-t-2 border-foreground bg-background md:hidden">
+        <div className="border-t-2 border-foreground bg-background lg:hidden">
           <div className="container-pad flex flex-col gap-1 py-3">
             {nav.map((item) => (
               <Link
